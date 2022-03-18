@@ -4,7 +4,13 @@ using UnityEngine;
 
 namespace jwellone
 {
-	public abstract class SingletonMonoBehaviour<T> : MonoBehaviour where T : SingletonMonoBehaviour<T>
+	public abstract class IntermediateSingletonMonoBehaviour : MonoBehaviour
+	{
+		internal abstract void Awake();
+		internal abstract void OnDestroy();
+	}
+
+	public abstract class SingletonMonoBehaviour<T> : IntermediateSingletonMonoBehaviour where T : SingletonMonoBehaviour<T>
 	{
 		private static T? _instance;
 
@@ -12,7 +18,7 @@ namespace jwellone
 		{
 			get
 			{
-				if (!isInstance)
+				if (!isExists)
 				{
 					new GameObject($"{typeof(T).Name}").AddComponent<T>();
 				}
@@ -21,7 +27,7 @@ namespace jwellone
 			}
 		}
 
-		public static bool isInstance
+		public static bool isExists
 		{
 			get;
 			private set;
@@ -29,16 +35,16 @@ namespace jwellone
 
 		public virtual bool isDontDestroyOnLoad => true;
 
-		private void Awake()
+		internal sealed override void Awake()
 		{
-			if (isInstance)
+			if (isExists)
 			{
 				Destroy(gameObject);
 				return;
 			}
 
 			_instance = (T)this;
-			isInstance = true;
+			isExists = true;
 
 			if (isDontDestroyOnLoad)
 			{
@@ -48,17 +54,22 @@ namespace jwellone
 			OnAwakened();
 		}
 
-		private void OnDestroy()
+		internal sealed override void OnDestroy()
 		{
 			OnDestroyed();
 			if (this == _instance)
 			{
-				isInstance = false;
+				isExists = false;
 				_instance = null;
 			}
 		}
 
-		protected abstract void OnAwakened();
-		protected abstract void OnDestroyed();
+		protected virtual void OnAwakened()
+		{
+		}
+
+		protected virtual void OnDestroyed()
+		{
+		}
 	}
 }
