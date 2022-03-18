@@ -6,6 +6,8 @@ namespace jwellone
 {
 	public abstract class IntermediateSingletonMonoBehaviour : MonoBehaviour
 	{
+		protected virtual bool isDontDestroyOnLoad => true;
+
 		internal abstract void Awake();
 		internal abstract void OnDestroy();
 	}
@@ -20,10 +22,17 @@ namespace jwellone
 			{
 				if (!isExists)
 				{
-					new GameObject($"{typeof(T).Name}").AddComponent<T>();
+					instance = FindObjectOfType<T>();
+					Debug.Assert(isExists, $"{typeof(T).Name} The instance does not exist.");
 				}
 
 				return _instance;
+			}
+
+			private set
+			{
+				_instance = value;
+				isExists = (_instance != null);
 			}
 		}
 
@@ -33,18 +42,17 @@ namespace jwellone
 			private set;
 		}
 
-		public virtual bool isDontDestroyOnLoad => true;
-
 		internal sealed override void Awake()
 		{
-			if (isExists)
+			if (!isExists)
+			{
+				instance = (T)this;
+			}
+			else if (_instance != this)
 			{
 				Destroy(gameObject);
 				return;
 			}
-
-			_instance = (T)this;
-			isExists = true;
 
 			if (isDontDestroyOnLoad)
 			{
@@ -59,8 +67,7 @@ namespace jwellone
 			OnDestroyed();
 			if (this == _instance)
 			{
-				isExists = false;
-				_instance = null;
+				instance = null;
 			}
 		}
 
