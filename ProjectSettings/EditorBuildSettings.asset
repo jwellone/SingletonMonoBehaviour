@@ -4,14 +4,5 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes:
-  - enabled: 1
-    path: Assets/jwellone/SingletonMonoBehaviour/Sample/Scenes/SampleScene.unity
-    guid: 2cda990e2423bbf4892e6590ba056729
-  - enabled: 1
-    path: Assets/jwellone/SingletonMonoBehaviour/Sample/Scenes/SceneA.unity
-    guid: a57813798de1947d9954c0665f72c081
-  - enabled: 1
-    path: Assets/jwellone/SingletonMonoBehaviour/Sample/Scenes/SceneB.unity
-    guid: 3598f52958314401583482f1bced9b54
+  m_Scenes: []
   m_configObjects: {}
